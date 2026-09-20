@@ -1,0 +1,79 @@
+# ==========================================
+# Dữ liệu dự án (Data security & privacy)
+# ==========================================
+# Bỏ qua toàn bộ dữ liệu thô và đã xử lý để bảo mật và tránh file quá nặng
+data/raw/*
+!data/raw/.gitkeep
+
+data/processed/*
+!data/processed/.gitkeep
+
+# Các định dạng file dữ liệu phổ biến
+*.csv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.sqlite3
+*.db
+
+# ==========================================
+# Mô hình đã huấn luyện (Model artifacts)
+# ==========================================
+models/*
+!models/.gitkeep
+
+*.pkl
+*.pickle
+*.joblib
+*.pt
+*.pth
+*.onnx
+*.bin
+
+# ==========================================
+# Môi trường ảo (Python Virtual Environments)
+# ==========================================
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ==========================================
+# Byte-compiled / Cache
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==========================================
+# Jupyter Notebooks Checkpoints
+# ==========================================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# ==========================================
+# File cấu hình bảo mật / Khóa bí mật (Secrets)
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# IDE & Hệ điều hành
+# ==========================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
