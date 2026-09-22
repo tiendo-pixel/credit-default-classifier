@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+
+  # ─────────────────────────────────────────
+  # Service 1: FastAPI — Inference API
+  # ─────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: credit_default_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount the models directory so the API always reads the latest model version
+      - ./models:/app/models:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PORT=8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────
+  # Service 2: Streamlit — Web UI
+  # ─────────────────────────────────────────
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: credit_default_ui
+    restart: unless-stopped
+    # Override CMD to run Streamlit instead of FastAPI
+    command: streamlit run ui/app_ui.py --server.port 8501 --server.address 0.0.0.0 --server.headless true
+    ports:
+      - "8501:8501"
+    environment:
+      # UI calls the API internally via Docker service name (not localhost)
+      - API_URL=http://api:8000
+    depends_on:
+      - api

@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────────────────────
+# .dockerignore — Credit Default Classifier
+# Ngăn Docker copy các file không cần thiết vào image
+# ─────────────────────────────────────────────────────────────
+
+# Git metadata
+.git
+.gitignore
+
+# Python virtual environments
+.venv
+venv
+env
+
+# Python cache
+__pycache__
+*.py[cod]
+*.so
+
+# Jupyter checkpoints
+.ipynb_checkpoints
+
+# Dữ liệu thô (bảo mật + dung lượng lớn)
+data/raw/
+!data/raw/.gitkeep
+
+# Model artifacts (sẽ được mount vào container qua docker volume)
+models/
+!models/.gitkeep
+
+# Môi trường cục bộ
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Test cache
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Tài liệu
+*.md
+docs/
