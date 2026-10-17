@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 680" width="100%" height="100%" style="background:#ffffff; font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.07"/>
+    </filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#475569"/>
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#059669"/>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="40" y="36" font-size="18" font-weight="700" fill="#0f172a">END-TO-END OPERATIONAL UNDERWRITING SEQUENCE</text>
+  <text x="40" y="56" font-size="12" fill="#64748b">Message orchestration across Borrower, Policy Engine, ML Scoring, SHAP, and HITL Risk Officer</text>
+
+  <!-- Participants / Lifelines -->
+  <!-- 1. Borrower: x = 90 -->
+  <!-- 2. UI Portal: x = 230 -->
+  <!-- 3. FastAPI: x = 370 -->
+  <!-- 4. Policy Engine: x = 510 -->
+  <!-- 5. ML & SHAP: x = 650 -->
+  <!-- 6. HITL Officer: x = 790 -->
+  <!-- 7. Core Banking: x = 930 -->
+
+  <!-- Lifeline Dashed Columns -->
+  <g stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4">
+    <line x1="90" y1="120" x2="90" y2="640"/>
+    <line x1="230" y1="120" x2="230" y2="640"/>
+    <line x1="370" y1="120" x2="370" y2="640"/>
+    <line x1="510" y1="120" x2="510" y2="640"/>
+    <line x1="650" y1="120" x2="650" y2="640"/>
+    <line x1="790" y1="120" x2="790" y2="640"/>
+    <line x1="930" y1="120" x2="930" y2="640"/>
+  </g>
+
+  <!-- Participant Headers -->
+  <g filter="url(#shadow)">
+    <!-- Borrower -->
+    <rect x="35" y="75" width="110" height="42" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="90" y="94" font-size="11" font-weight="700" fill="#334155" text-anchor="middle">Borrower</text>
+    <text x="90" y="108" font-size="9" fill="#64748b" text-anchor="middle">(Applicant)</text>
+
+    <!-- UI Portal -->
+    <rect x="175" y="75" width="110" height="42" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="230" y="94" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="middle">Loan Portal</text>
+    <text x="230" y="108" font-size="9" fill="#3b82f6" text-anchor="middle">(Frontend UI)</text>
+
+    <!-- FastAPI Gateway -->
+    <rect x="315" y="75" width="110" height="42" rx="6" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="370" y="94" font-size="11" font-weight="700" fill="#15803d" text-anchor="middle">API Gateway</text>
+    <text x="370" y="108" font-size="9" fill="#16a34a" text-anchor="middle">(FastAPI)</text>
+
+    <!-- Policy Rule Engine -->
+    <rect x="455" y="75" width="110" height="42" rx="6" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="510" y="94" font-size="11" font-weight="700" fill="#b45309" text-anchor="middle">Policy Engine</text>
+    <text x="510" y="108" font-size="9" fill="#d97706" text-anchor="middle">(Knock-outs)</text>
+
+    <!-- ML & SHAP -->
+    <rect x="595" y="75" width="110" height="42" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="650" y="94" font-size="11" font-weight="700" fill="#6d28d9" text-anchor="middle">ML &amp; SHAP</text>
+    <text x="650" y="108" font-size="9" fill="#7c3aed" text-anchor="middle">(LightGBM)</text>
+
+    <!-- HITL Officer -->
+    <rect x="735" y="75" width="110" height="42" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="790" y="94" font-size="11" font-weight="700" fill="#b91c1c" text-anchor="middle">Risk Officer</text>
+    <text x="790" y="108" font-size="9" fill="#dc2626" text-anchor="middle">(HITL)</text>
+
+    <!-- Core Banking -->
+    <rect x="875" y="75" width="110" height="42" rx="6" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="930" y="94" font-size="11" font-weight="700" fill="#047857" text-anchor="middle">Core Banking</text>
+    <text x="930" y="108" font-size="9" fill="#059669" text-anchor="middle">(Disbursal)</text>
+  </g>
+
+  <!-- Step 1: Submit Application -->
+  <line x1="90" y1="145" x2="230" y2="145" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+  <text x="160" y="138" font-size="10" font-weight="600" fill="#1e40af" text-anchor="middle">1. Apply &amp; PDPA Consent</text>
+
+  <!-- Step 2: Post to API -->
+  <line x1="230" y1="175" x2="370" y2="175" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="300" y="168" font-size="10" fill="#334155" text-anchor="middle">2. POST /api/predict</text>
+
+  <!-- Step 3: Check Knock-out Rules -->
+  <line x1="370" y1="210" x2="510" y2="210" stroke="#d97706" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="440" y="203" font-size="10" font-weight="600" fill="#b45309" text-anchor="middle">3. Check Knock-Outs (Age, CIC, DTI)</text>
+
+  <!-- Step 4: Knock-out Pass -->
+  <line x1="510" y1="240" x2="370" y2="240" stroke="#059669" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arr-green)"/>
+  <text x="440" y="233" font-size="10" font-weight="600" fill="#059669" text-anchor="middle">4. Pre-Screening Cleared (Pass)</text>
+
+  <!-- Step 5: Feature Engineering & Scoring -->
+  <line x1="370" y1="275" x2="650" y2="275" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="510" y="268" font-size="10" font-weight="600" fill="#6d28d9" text-anchor="middle">5. Feature Pipeline &amp; LightGBM Scoring</text>
+
+  <!-- Step 6: SHAP & PD Output -->
+  <line x1="650" y1="310" x2="370" y2="310" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+  <text x="510" y="303" font-size="10" fill="#4c1d95" text-anchor="middle">6. Return PD, Score (300-850), &amp; Top 3 SHAP Drivers</text>
+
+  <!-- Step 7: Push to HITL Workbench -->
+  <line x1="370" y1="355" x2="790" y2="355" stroke="#ef4444" stroke-width="1.8" marker-end="url(#arr-red)"/>
+  <text x="580" y="347" font-size="10" font-weight="700" fill="#b91c1c" text-anchor="middle">7. Route Dossier to HITL Workbench for Officer Sign-off</text>
+
+  <!-- Box highlighting HITL Authority -->
+  <rect x="720" y="375" width="140" height="75" rx="6" fill="#fff1f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="790" y="394" font-size="10" font-weight="700" fill="#991b1b" text-anchor="middle">HITL EVALUATION</text>
+  <text x="790" y="410" font-size="9" fill="#7f1d1d" text-anchor="middle">• Review SHAP Factors</text>
+  <text x="790" y="424" font-size="9" fill="#7f1d1d" text-anchor="middle">• Adjust / Set Credit Limit</text>
+  <text x="790" y="438" font-size="9" fill="#7f1d1d" text-anchor="middle">• Sole Legal Authority</text>
+
+  <!-- Step 8: Officer Decision -->
+  <line x1="790" y1="470" x2="370" y2="470" stroke="#059669" stroke-width="1.8" stroke-dasharray="3 3" marker-end="url(#arr-green)"/>
+  <text x="580" y="463" font-size="10" font-weight="700" fill="#047857" text-anchor="middle">8. Officer Approval Signed (Limit = X VND)</text>
+
+  <!-- Step 9: Trigger Disbursal -->
+  <line x1="370" y1="510" x2="930" y2="510" stroke="#059669" stroke-width="1.8" marker-end="url(#arr-green)"/>
+  <text x="650" y="503" font-size="10" font-weight="700" fill="#065f46" text-anchor="middle">9. Trigger Loan Contract &amp; Disbursal</text>
+
+  <!-- Step 10: Disburse Funds to Borrower -->
+  <line x1="930" y1="550" x2="90" y2="550" stroke="#059669" stroke-width="1.8" stroke-dasharray="3 3" marker-end="url(#arr-green)"/>
+  <text x="510" y="543" font-size="10" font-weight="700" fill="#047857" text-anchor="middle">10. Funds Transferred to Borrower E-Wallet / Account</text>
+
+  <!-- Alternative Note: If Rejected -->
+  <line x1="370" y1="595" x2="90" y2="595" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="2 2" marker-end="url(#arr-red)"/>
+  <text x="230" y="588" font-size="10" font-weight="600" fill="#b91c1c" text-anchor="middle">[If Declined]: Adverse Action Notice + SHAP Reasons</text>
+</svg>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreditGuard AI - Hệ Thống Chấm Điểm & Thẩm Định Rủi Ro Tín Dụng</title>
+    <meta name="description" content="Nền tảng trí tuệ nhân tạo thẩm định rủi ro tín dụng, tự động hóa tính xác suất vỡ nợ (PD) và hỗ trợ quyết định phê duyệt khoản vay chuẩn ngân hàng.">
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-glow top-left"></div>
+    <div class="background-glow bottom-right"></div>
+
+    <!-- Header / Navbar -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="5" width="20" height="14" rx="3"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                        <circle cx="6" cy="15" r="1.5" fill="currentColor"></circle>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">CreditGuard AI</h1>
+                    <span class="brand-subtitle">Automated Risk Underwriting & Default Intelligence</span>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="api-status-badge">
+                    <span class="status-dot"></span>
+                    <span id="api-status-text">FastAPI Engine: Đang kết nối...</span>
+                </div>
+                <div class="version-tag">Model v1.0.4 (LGBM)</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs" aria-label="Tabs điều hướng">
+            <button class="tab-btn active" id="tab-btn-single" onclick="switchTab('single')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Thẩm Định Đơn Lẻ
+            </button>
+            <button class="tab-btn" id="tab-btn-batch" onclick="switchTab('batch')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                Chấm Điểm Danh Mục Hàng Loạt
+            </button>
+            <button class="tab-btn" id="tab-btn-monitor" onclick="switchTab('monitor')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Giám Sát & Hiệu Năng Mô Hình
+            </button>
+        </nav>
+
+        <!-- ============================================================== -->
+        <!-- TAB 1: SINGLE UNDERWRITING                                     -->
+        <!-- ============================================================== -->
+        <section id="tab-content-single" class="tab-panel active">
+            <!-- Preset Scenarios for Rapid Testing -->
+            <div class="preset-card">
+                <span class="preset-label">Mẫu dữ liệu thử nghiệm nhanh:</span>
+                <div class="preset-buttons">
+                    <button type="button" class="btn-preset low-risk" onclick="applyPreset('low_risk')">
+                        🟢 Hồ sơ chuẩn (Duyệt ngay)
+                    </button>
+                    <button type="button" class="btn-preset med-risk" onclick="applyPreset('med_risk')">
+                        🟡 Hồ sơ chú ý (Cần thẩm định)
+                    </button>
+                    <button type="button" class="btn-preset high-risk" onclick="applyPreset('high_risk')">
+                        🔴 Hồ sơ rủi ro cao (Từ chối)
+                    </button>
+                </div>
+            </div>
+
+            <div class="split-layout">
+                <!-- Left: Application Form -->
+                <div class="form-container">
+                    <form id="loan-application-form">
+                        <h2 class="section-title">
+                            <span class="step-num">1</span>
+                            Thông Tin Khoản Vay & Thu Nhập
+                        </h2>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="input-applicant-name">Họ và tên khách hàng</label>
+                                <input type="text" id="input-applicant-name" required value="Nguyễn Hoàng Nam">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="input-age">Độ tuổi</label>
+                                <input type="number" id="input-age" min="18" max="75" value="31" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="input-monthly-income">Thu nhập thực nhận / tháng (VND)</label>
+                                <input type="number" id="input-monthly-income" min="3000000" step="500000" value="18000000" required>
+                                <span class="input-hint" id="hint-income">18,000,000 VND</span>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="input-requested-amount">Số tiền đề xuất vay (VND)</label>
+                                <input type="number" id="input-requested-amount" min="5000000" step="1000000" value="35000000" required>
+                                <span class="input-hint" id="hint-amount">35,000,000 VND</span>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="input-loan-tenor">Kỳ hạn vay</label>
+                                <select id="input-loan-tenor">
+                                    <option value="6">6 Tháng</option>
+                                    <option value="12" selected>12 Tháng</option>
+                                    <option value="18">18 Tháng</option>
+                                    <option value="24">24 Tháng</option>
+                                    <option value="36">36 Tháng</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="input-total-debt">Dư nợ hiện tại tại các TCTD (VND)</label>
+                                <input type="number" id="input-total-debt" min="0" step="1000000" value="8000000" required>
+                                <span class="input-hint" id="hint-debt">8,000,000 VND</span>
+                            </div>
+                        </div>
+
+                        <h2 class="section-title mt-4">
+                            <span class="step-num">2</span>
+                            Lịch Sử Tín Dụng CIC & Chỉ Số Căng Thẳng
+                        </h2>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="input-cic-group">Nhóm nợ CIC cao nhất lịch sử</label>
+                                <select id="input-cic-group">
+                                    <option value="1" selected>Nhóm 1 - Nợ đủ tiêu chuẩn (Clean)</option>
+                                    <option value="2">Nhóm 2 - Nợ cần chú ý (10 - 90 ngày)</option>
+                                    <option value="3">Nhóm 3 - Nợ dưới tiêu chuẩn (91 - 180 ngày)</option>
+                                    <option value="4">Nhóm 4 - Nợ nghi ngờ (181 - 360 ngày)</option>
+                                    <option value="5">Nhóm 5 - Nợ có khả năng mất vốn (>360 ngày)</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="input-inquiries">Số lần tra cứu CIC trong 3 tháng gần nhất</label>
+                                <input type="number" id="input-inquiries" min="0" max="25" value="1" required>
+                                <span class="input-hint">Đo lường mức độ khát vốn (Credit Hunger)</span>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="input-card-util">Tỷ lệ sử dụng hạn mức thẻ tín dụng (%)</label>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="input-card-util" min="0" max="100" value="30" oninput="updateRangeLabel('card-util-val', this.value + '%')">
+                                    <span id="card-util-val" class="slider-badge">30%</span>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="input-non-bank">Tỷ lệ dư nợ tại Công ty Tài chính / Fintech (%)</label>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="input-non-bank" min="0" max="100" value="15" oninput="updateRangeLabel('non-bank-val', this.value + '%')">
+                                    <span id="non-bank-val" class="slider-badge">15%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="btn-submit-scoring" class="btn-primary">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                </svg>
+                                <span>Phân Tích & Chấm Điểm Ngay</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right: Real-time Scoring Results Dashboard -->
+                <div class="results-container">
+                    <div id="results-placeholder" class="placeholder-state">
+                        <div class="placeholder-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                        <h3>Sẵn Sàng Thẩm Định</h3>
+                        <p>Nhập thông tin hồ sơ hoặc chọn một trong các mẫu hồ sơ nhanh ở trên, sau đó nhấn <strong>Phân Tích & Chấm Điểm</strong> để xem kết quả.</p>
+                    </div>
+
+                    <!-- Live Assessment Card (Shown after scoring) -->
+                    <div id="results-content" class="results-card" style="display: none;">
+                        <div class="result-header">
+                            <div>
+                                <span class="customer-tag">Khách hàng thẩm định</span>
+                                <h3 id="res-applicant-name" class="result-applicant-name">Nguyễn Văn A</h3>
+                            </div>
+                            <div id="res-verdict-badge" class="verdict-pill approved">
+                                <span class="verdict-icon">●</span>
+                                <span id="res-verdict-text">APPROVED</span>
+                            </div>
+                        </div>
+
+                        <!-- Gauge & Key Metric Row -->
+                        <div class="scoring-overview-row">
+                            <!-- Circular SVG Gauge -->
+                            <div class="gauge-card">
+                                <span class="gauge-title">Xác Suất Vỡ Nợ (PD)</span>
+                                <div class="gauge-visual">
+                                    <svg viewBox="0 0 200 120" class="gauge-svg">
+                                        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#1e293b" stroke-width="18" stroke-linecap="round"></path>
+                                        <path id="gauge-fill-arc" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#10b981" stroke-width="18" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="200"></path>
+                                    </svg>
+                                    <div class="gauge-center-text">
+                                        <span id="res-pd-val" class="gauge-val">8.4%</span>
+                                        <span class="gauge-sub">Mức rủi ro thấp</span>
+                                    </div>
+                                </div>
+                                <div class="gauge-scales">
+                                    <span>0% An toàn</span>
+                                    <span>20% Chú ý</span>
+                                    <span>45%+ Từ chối</span>
+                                </div>
+                            </div>
+
+                            <!-- Quick Stats Metrics -->
+                            <div class="metrics-column">
+                                <div class="metric-mini-card">
+                                    <span class="metric-label">Điểm Tín Dụng Nội Bộ</span>
+                                    <div class="metric-val-row">
+                                        <span id="res-credit-score" class="metric-number">790</span>
+                                        <span class="metric-unit">/ 850</span>
+                                    </div>
+                                    <span id="res-score-tier" class="metric-desc text-success">Hạng AAA - Cực kỳ tin cậy</span>
+                                </div>
+
+                                <div class="metric-mini-card">
+                                    <span class="metric-label">Gánh Nặng Nợ (DTI)</span>
+                                    <div class="metric-val-row">
+                                        <span id="res-dti-val" class="metric-number">18.5%</span>
+                                    </div>
+                                    <span id="res-dti-status" class="metric-desc text-success">Khả năng chi trả tốt</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Underwriting Reason Box -->
+                        <div class="verdict-reason-box">
+                            <span class="reason-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                                Cơ sở kết luận thẩm định:
+                            </span>
+                            <p id="res-decision-reason">Khách hàng có lịch sử tín dụng chuẩn mực, không có nợ quá hạn và tỷ lệ đòn bẩy DTI nằm trong biên độ an toàn.</p>
+                        </div>
+
+                        <!-- Explainability: Top Risk Drivers -->
+                        <div class="risk-breakdown-section">
+                            <h4 class="breakdown-title">Top Yếu Tố Ảnh Hưởng Rủi Ro (Mô phỏng SHAP Impact):</h4>
+                            <div id="risk-factors-list" class="risk-factors-container">
+                                <!-- Populated dynamically by script.js -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 2: BATCH SCORING                                           -->
+        <!-- ============================================================== -->
+        <section id="tab-content-batch" class="tab-panel">
+            <div class="batch-upload-box">
+                <div class="upload-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
+                <h3>Tải Lên Tệp Dữ Liệu Hồ Sơ</h3>
+                <p>Hỗ trợ định dạng <code>.xlsx</code> (như Professional Test.xlsx) hoặc <code>.csv</code> để chấm điểm danh mục tín dụng lớn.</p>
+                <div class="upload-actions">
+                    <button type="button" class="btn-primary" onclick="runSimulatedBatch()">
+                        ⚡ Nạp Danh Mục Thử Nghiệm (10 Hồ Sơ Demo)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Batch Summary Metrics -->
+            <div id="batch-results-area" style="display: none; margin-top: 2rem;">
+                <div class="batch-stats-grid">
+                    <div class="batch-stat-card">
+                        <span class="stat-title">Tổng Hồ Sơ Xử Lý</span>
+                        <span id="batch-total-count" class="stat-value">10</span>
+                    </div>
+                    <div class="batch-stat-card border-green">
+                        <span class="stat-title">Tỷ Lệ Tự Động Duyệt (Approve)</span>
+                        <span id="batch-approve-rate" class="stat-value text-success">70%</span>
+                    </div>
+                    <div class="batch-stat-card border-amber">
+                        <span class="stat-title">Thẩm Định Lại (Review)</span>
+                        <span id="batch-review-rate" class="stat-value text-amber">20%</span>
+                    </div>
+                    <div class="batch-stat-card border-red">
+                        <span class="stat-title">Tỷ Lệ Từ Chối (Reject)</span>
+                        <span id="batch-reject-rate" class="stat-value text-red">10%</span>
+                    </div>
+                </div>
+
+                <div class="table-container mt-4">
+                    <table class="batch-table">
+                        <thead>
+                            <tr>
+                                <th>Khách Hàng</th>
+                                <th>Số Tiền Vay</th>
+                                <th>Thu Nhập</th>
+                                <th>Nhóm CIC</th>
+                                <th>DTI</th>
+                                <th>PD (%)</th>
+                                <th>Score</th>
+                                <th>Quyết Định</th>
+                            </tr>
+                        </thead>
+                        <tbody id="batch-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 3: MODEL MONITORING & HEALTH                               -->
+        <!-- ============================================================== -->
+        <section id="tab-content-monitor" class="tab-panel">
+            <div class="monitoring-grid">
+                <div class="monitor-card">
+                    <span class="monitor-card-label">Out-of-Time ROC-AUC</span>
+                    <span class="monitor-metric">0.784</span>
+                    <span class="badge-trend positive">+0.024 so với Baseline</span>
+                </div>
+                <div class="monitor-card">
+                    <span class="monitor-card-label">Hệ Số Phân Biệt Gini</span>
+                    <span class="monitor-metric">56.8%</span>
+                    <span class="badge-trend positive">Khả năng phân loại xuất sắc</span>
+                </div>
+                <div class="monitor-card">
+                    <span class="monitor-card-label">Khoảng Cách KS (Kolmogorov-Smirnov)</span>
+                    <span class="monitor-metric">41.2%</span>
+                    <span class="badge-trend positive">Đạt chuẩn ngân hàng (>35%)</span>
+                </div>
+                <div class="monitor-card">
+                    <span class="monitor-card-label">Chỉ Số Dịch Chuyển Dữ Liệu (PSI)</span>
+                    <span class="monitor-metric">0.038</span>
+                    <span class="badge-trend positive">Quần thể ổn định (&lt;0.10)</span>
+                </div>
+            </div>
+
+            <div class="monitor-charts-row mt-4">
+                <div class="chart-box">
+                    <h3 class="chart-title">Tầm Quan Trọng Đặc Trưng Toàn Cục (Feature Importance)</h3>
+                    <div class="feature-bar-list">
+                        <div class="f-bar-item">
+                            <span class="f-name">Nhóm nợ lịch sử CIC (cic_max_credit_group)</span>
+                            <div class="f-bar"><div class="f-fill" style="width: 88%;"></div></div>
+                            <span class="f-val">24.2%</span>
+                        </div>
+                        <div class="f-bar-item">
+                            <span class="f-name">Gánh nặng nợ trên thu nhập (dti_ratio)</span>
+                            <div class="f-bar"><div class="f-fill" style="width: 72%;"></div></div>
+                            <span class="f-val">19.5%</span>
+                        </div>
+                        <div class="f-bar-item">
+                            <span class="f-name">Tần suất tra cứu CIC 3 tháng (inquiry_count_3m)</span>
+                            <div class="f-bar"><div class="f-fill" style="width: 55%;"></div></div>
+                            <span class="f-val">15.1%</span>
+                        </div>
+                        <div class="f-bar-item">
+                            <span class="f-name">Tỷ lệ sử dụng thẻ tín dụng (card_utilization)</span>
+                            <div class="f-bar"><div class="f-fill" style="width: 44%;"></div></div>
+                            <span class="f-val">12.3%</span>
+                        </div>
+                        <div class="f-bar-item">
+                            <span class="f-name">Dư nợ công ty tài chính (non_bank_debt_share)</span>
+                            <div class="f-bar"><div class="f-fill" style="width: 36%;"></div></div>
+                            <span class="f-val">9.8%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h3 class="chart-title">Chiến Lược Quản Trị Rủi Ro & Khẩu Vị (Risk Appetite)</h3>
+                    <div class="policy-box">
+                        <div class="policy-item">
+                            <span class="p-badge p-green">Tự động duyệt (PD &lt; 20%)</span>
+                            <p>Khách hàng có tỷ lệ chi trả vững mạnh, không có dấu hiệu nợ xấu. Luồng xử lý tức thì (STP - Straight Through Processing).</p>
+                        </div>
+                        <div class="policy-item">
+                            <span class="p-badge p-amber">Thẩm định hồ sơ (20% &le; PD &lt; 45%)</span>
+                            <p>Yêu cầu chuyên viên xác minh thêm sao kê lương hoặc tài sản đảm bảo.</p>
+                        </div>
+                        <div class="policy-item">
+                            <span class="p-badge p-red">Từ chối tự động (PD &ge; 45%)</span>
+                            <p>Rủi ro vỡ nợ cao hoặc có lịch sử nợ xấu nhóm 3-5 tại CIC.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>Hệ Thống Trí Tuệ Nhân Tạo Thẩm Định Tín Dụng &copy; 2024 - 2026. Chuẩn Mực Basel II &amp; IFRS 9.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

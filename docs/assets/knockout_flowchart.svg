@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 480" width="100%" height="100%" style="background:#ffffff; font-family:'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#ef4444"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <!-- Title Banner -->
+  <text x="40" y="38" font-size="18" font-weight="700" fill="#0f172a">CREDIT POLICY &amp; KNOCK-OUT DECISION FLOW</text>
+  <text x="40" y="58" font-size="12" fill="#64748b">Pre-screening policy filter and deterministic machine learning execution path</text>
+
+  <!-- STEP 1: Application Received -->
+  <g transform="translate(40, 90)" filter="url(#shadow)">
+    <rect width="180" height="60" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect width="6" height="60" rx="3" fill="#2563eb"/>
+    <text x="20" y="27" font-size="11" font-weight="700" fill="#2563eb">INPUT STAGE</text>
+    <text x="20" y="45" font-size="13" font-weight="600" fill="#1e293b">Loan Application</text>
+  </g>
+
+  <!-- Flow Arrow 1 -> 2 -->
+  <line x1="220" y1="120" x2="270" y2="120" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- STEP 2: Knock-Out Diamond / Check -->
+  <g transform="translate(275, 80)" filter="url(#shadow)">
+    <rect width="190" height="80" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+    <text x="95" y="28" font-size="12" font-weight="700" fill="#b45309" text-anchor="middle">KNOCK-OUT RULES</text>
+    <text x="95" y="47" font-size="11" fill="#451a03" text-anchor="middle">• Age: 18 - 65 yrs</text>
+    <text x="95" y="63" font-size="11" fill="#451a03" text-anchor="middle">• CIC Group &lt; 3 | DTI &#8804; 60%</text>
+  </g>
+
+  <!-- Failed Knock-out Branch (Downward) -->
+  <path d="M 370 160 L 370 210" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-red)"/>
+  <rect x="375" y="172" width="60" height="18" rx="4" fill="#fee2e2"/>
+  <text x="405" y="185" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">FAILED</text>
+
+  <g transform="translate(280, 215)" filter="url(#shadow)">
+    <rect width="180" height="65" rx="8" fill="#fef2f2" stroke="#f87171" stroke-width="1.5"/>
+    <text x="90" y="24" font-size="11" font-weight="700" fill="#dc2626" text-anchor="middle">AUTO-REJECTION</text>
+    <text x="90" y="42" font-size="11" fill="#991b1b" text-anchor="middle">Immediate Policy Decline</text>
+    <text x="90" y="56" font-size="10" fill="#7f1d1d" text-anchor="middle">(Zero ML Compute Consumed)</text>
+  </g>
+
+  <!-- Passed Knock-out Branch (Rightward) -->
+  <line x1="465" y1="120" x2="520" y2="120" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <rect x="472" y="100" width="40" height="16" rx="3" fill="#d1fae5"/>
+  <text x="492" y="112" font-size="9" font-weight="700" fill="#059669" text-anchor="middle">PASS</text>
+
+  <!-- STEP 3: Feature Eng & Model -->
+  <g transform="translate(525, 80)" filter="url(#shadow)">
+    <rect width="175" height="80" rx="8" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="87" y="26" font-size="11" font-weight="700" fill="#0369a1" text-anchor="middle">ML CORE ENGINE</text>
+    <text x="87" y="46" font-size="12" font-weight="600" fill="#0c4a6e" text-anchor="middle">Feature Engineering</text>
+    <text x="87" y="64" font-size="11" fill="#0284c7" text-anchor="middle">+ LightGBM Scoring</text>
+  </g>
+
+  <!-- Flow Arrow 3 -> 4 -->
+  <line x1="700" y1="120" x2="745" y2="120" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- STEP 4: SHAP Explainability -->
+  <g transform="translate(750, 80)" filter="url(#shadow)">
+    <rect width="140" height="80" rx="8" fill="#faf5ff" stroke="#a855f7" stroke-width="1.5"/>
+    <text x="70" y="26" font-size="11" font-weight="700" fill="#7e22ce" text-anchor="middle">XAI / SHAP</text>
+    <text x="70" y="46" font-size="11" font-weight="600" fill="#581c87" text-anchor="middle">Top 3 Adverse</text>
+    <text x="70" y="62" font-size="11" fill="#7e22ce" text-anchor="middle">&amp; Positive Factors</text>
+  </g>
+
+  <!-- Downward Line to HITL -->
+  <path d="M 820 160 L 820 330 L 730 330" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- STEP 5: HITL Workbench -->
+  <g transform="translate(520, 290)" filter="url(#shadow)">
+    <rect width="205" height="80" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text x="102" y="26" font-size="11" font-weight="700" fill="#1d4ed8" text-anchor="middle">HITL GOVERNANCE</text>
+    <text x="102" y="46" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">Credit Risk Officer</text>
+    <text x="102" y="64" font-size="11" fill="#64748b" text-anchor="middle">Workbench Assessment</text>
+  </g>
+
+  <!-- Final Decisions from Officer -->
+  <!-- Approved Branch (Leftward Green) -->
+  <path d="M 520 315 L 260 315" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+  <rect x="360" y="303" width="70" height="18" rx="4" fill="#d1fae5"/>
+  <text x="395" y="316" font-size="10" font-weight="700" fill="#059669" text-anchor="middle">APPROVED</text>
+
+  <g transform="translate(40, 290)" filter="url(#shadow)">
+    <rect width="215" height="55" rx="8" fill="#ecfdf5" stroke="#34d399" stroke-width="1.5"/>
+    <text x="107" y="23" font-size="11" font-weight="700" fill="#047857" text-anchor="middle">FACILITY DISBURSED</text>
+    <text x="107" y="41" font-size="11" fill="#065f46" text-anchor="middle">Credit Line Activated (Core Bank)</text>
+  </g>
+
+  <!-- Declined Branch (Downward Red) -->
+  <path d="M 520 350 L 260 350 L 260 385" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrow-red)"/>
+  <rect x="355" y="340" width="80" height="18" rx="4" fill="#fee2e2"/>
+  <text x="395" y="353" font-size="10" font-weight="700" fill="#dc2626" text-anchor="middle">REJECT / ADJ</text>
+
+  <g transform="translate(150, 390)" filter="url(#shadow)">
+    <rect width="220" height="55" rx="8" fill="#fff1f2" stroke="#fb7185" stroke-width="1.5"/>
+    <text x="110" y="23" font-size="11" font-weight="700" fill="#be123c" text-anchor="middle">ADVERSE ACTION NOTICE</text>
+    <text x="110" y="41" font-size="11" fill="#881337" text-anchor="middle">Dispatched with SHAP Drivers</text>
+  </g>
+
+  <!-- Insufficient Data Branch (Rightward Amber) -->
+  <path d="M 622 370 L 622 415 L 530 415" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arrow-amber)"/>
+  <g transform="translate(390, 395)" filter="url(#shadow)">
+    <rect width="135" height="45" rx="6" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5"/>
+    <text x="67" y="20" font-size="10" font-weight="700" fill="#b45309" text-anchor="middle">REQUEST MORE DATA</text>
+    <text x="67" y="35" font-size="10" fill="#78350f" text-anchor="middle">Proof of utility/bills</text>
+  </g>
+</svg>

@@ -403,7 +403,7 @@ class DataLoader:
                     return "Unknown"
                 s = str(val).strip().lower()
                 if s in ("", "0", "0.0", "-1", "none", "nan", "null", "unknown", "other"):
-                    return "Unknown"
+                    return "Other"
                 if "ios" in s or "iphone" in s:
                     return "iOS"
                 if "android" in s:
@@ -411,6 +411,21 @@ class DataLoader:
                 return str(val).strip().title()
 
             df_clean[os_col] = df_clean[os_col].apply(_normalize_os)
+
+        # Specific normalization for gender if present
+        gender_col = next((c for c in df_clean.columns if c.lower() in ("gender", "gioi_tinh")), None)
+        if gender_col is not None:
+            def _normalize_gender(val):
+                if pd.isna(val):
+                    return "UNKNOWN"
+                s = str(val).strip().lower()
+                if s in ("nam", "male", "m", "1"):
+                    return "MALE"
+                elif s in ("nữ", "nu", "female", "f", "0"):
+                    return "FEMALE"
+                return "UNKNOWN"
+
+            df_clean[gender_col] = df_clean[gender_col].apply(_normalize_gender)
 
         # General object column sanitization to prevent pyarrow type inference errors
         for col in df_clean.columns:

@@ -10,9 +10,26 @@ from sklearn.preprocessing import RobustScaler, OneHotEncoder
 
 
 class OutlierCapper(BaseEstimator, TransformerMixin):
-    # Winsorize: clip values outside [p1, p99] to reduce outlier noise
-    ...
+    def __init__(self, lower_p: float = 0.25, upper_p: float = 0.75):
+        # Initialize with desired percentile bounds (default 25th and 75th)
+        self.lower_p = lower_p
+        self.upper_p = upper_p
+        self.lower_bound_ = None
+        self.upper_bound_ = None
 
+    def fit(self, X, y=None):
+        # Compute bounds from training data (never fit on test data)
+        self.lower_bound_ = np.percentile(X, self.lower_p * 100)
+        self.upper_bound_ = np.percentile(X, self.upper_p * 100)
+        return self
+
+    def transform(self, X):
+        # Clip values to [lower_bound, upper_bound]
+        return np.clip(
+            X, 
+            a_min=self.lower_bound_, 
+            a_max=self.upper_bound_
+        )
 
 class DataPreprocessor:
     def __init__(self, num_cols: list, cat_cols: list):
