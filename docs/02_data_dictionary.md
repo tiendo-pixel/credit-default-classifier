@@ -137,42 +137,42 @@
 Quantifies the borrower's total contractual loan exposure against their verifiable monthly earning power:
 
 $$
-\text{DTI} = \operatorname{clip}\left( \frac{\text{Principal}_{\text{short}} + \text{Principal}_{\text{mid}} + \text{Principal}_{\text{long}}}{\text{Income}_{\text{monthly}}}, 0, 50 \right)
+\text{DTI} = \mathrm{clip}\left( \frac{\text{Principal}_{\text{short}} + \text{Principal}_{\text{mid}} + \text{Principal}_{\text{long}}}{\text{Income}_{\text{monthly}}}, 0, 50 \right)
 $$
 
 ##### 2. Balance-to-Income Ratio ($\text{BTI}$)
 Evaluates immediate liquidity pressure by measuring current cycle ($M_1$) outstanding balance against monthly cash flow:
 
 $$
-\text{BTI} = \operatorname{clip}\left( \frac{\text{Balance}_{M1}}{\text{Income}_{\text{monthly}}}, 0, 50 \right)
+\text{BTI} = \mathrm{clip}\left( \frac{\text{Balance}_{M1}}{\text{Income}_{\text{monthly}}}, 0, 50 \right)
 $$
 
 ##### 3. Subprime & Non-Bank Dependency Ratio
 Measures the concentration of debt originating from non-bank consumer finance companies:
 
 $$
-\text{Ratio}_{\text{non-bank}} = \operatorname{clip}\left( \frac{N_{\text{loans, non-bank}}}{\max(N_{\text{loans, total}}, 1)}, 0, 1 \right)
+\text{Ratio}_{\text{non-bank}} = \mathrm{clip}\left( \frac{N_{\text{loans, non-bank}}}{\max(N_{\text{loans, total}}, 1)}, 0, 1 \right)
 $$
 
 ##### 4. Revolving Credit Card Utilization ($\text{Util}_{\text{card}}$)
 Identifies liquidity distress when revolving card balances approach or exceed credit limits:
 
 $$
-\text{Util}_{\text{card}} = \operatorname{clip}\left( \frac{\text{Balance}_{\text{card, current}}}{\max(\text{Limit}_{\text{card, total}}, 1)}, 0, 5 \right)
+\text{Util}_{\text{card}} = \mathrm{clip}\left( \frac{\text{Balance}_{\text{card, current}}}{\max(\text{Limit}_{\text{card, total}}, 1)}, 0, 5 \right)
 $$
 
 ##### 5. Credit Inquiry Velocity ($\text{Velocity}_{\text{inquiry}}$)
 Detects urgent credit hunger by comparing short-term inquiry velocity (past 3 months) to the historical quarterly baseline:
 
 $$
-\text{Velocity}_{\text{inquiry}} = \operatorname{clip}\left( \frac{\text{Inquiries}_{3M}}{\max(\text{Inquiries}_{12M} / 4.0, 1.0)}, 0, 10 \right)
+\text{Velocity}_{\text{inquiry}} = \mathrm{clip}\left( \frac{\text{Inquiries}_{3M}}{\max(\text{Inquiries}_{12M} / 4.0, 1.0)}, 0, 10 \right)
 $$
 
 ##### 6. Quarterly Debt Trajectory ($\Delta\text{Balance}_{3M}$)
 Evaluates whether borrower indebtedness is escalating or de-leveraging over a 90-day window:
 
 $$
-\Delta\text{Balance}_{3M} = \operatorname{clip}\left( \frac{\text{Balance}_{M1} - \text{Balance}_{M3}}{\text{Balance}_{M3} + 1.0}, -10, 10 \right)
+\Delta\text{Balance}_{3M} = \mathrm{clip}\left( \frac{\text{Balance}_{M1} - \text{Balance}_{M3}}{\text{Balance}_{M3} + 1.0}, -10, 10 \right)
 $$
 
 ##### 7. Historical Delinquency Segmentation Flag
