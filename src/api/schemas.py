@@ -1,7 +1,6 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-
 class LoanApplicationRequest(BaseModel):
     """Input payload for single applicant risk scoring."""
     applicant_name: Optional[str] = Field(default="Nguyễn Văn A", description="Applicant Name")
