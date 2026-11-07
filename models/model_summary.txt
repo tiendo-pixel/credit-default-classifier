@@ -1,0 +1,31 @@
+================================================================================
+CREDIT DEFAULT RISK MODEL - HIGHEST ACCURACY PERFORMANCE REPORT
+================================================================================
+Champion Model       : RandomForest
+Imbalance Strategy   : class_weight
+Exported Timestamp   : 2026-11-07 13:49:44
+Target Variable      : dpd10_3mob
+Optimal Cutoff Thresh: 0.4821
+Total Predictors     : 60
+
+--------------------------------------------------------------------------------
+1. PRIMARY PERFORMANCE METRICS (OUT-OF-TIME TEST EVALUATION)
+--------------------------------------------------------------------------------
+- Test ROC-AUC Score        : 0.7726
+- Train ROC-AUC Score       : 0.7977
+- Generalization Gap        : +0.0251 (Under/Overfitting diagnostic)
+- Kolmogorov-Smirnov (KS)   : 0.4040 (Separation Power: Good > 0.30)
+- Gini Coefficient          : 0.5452 (2 * AUC - 1)
+- Population Stability (PSI): 0.0195 (Stability: < 0.10 Stable)
+- Brier Score (Calibration) : 0.1873 (Probability Accuracy)
+
+--------------------------------------------------------------------------------
+2. CLASSIFICATION METRICS (AT CUTOFF = 0.4821)
+--------------------------------------------------------------------------------
+- Accuracy                  : 0.7729
+- Precision                 : 0.3796
+- Recall (Sensitivity)      : 0.5854
+- F1-Score                  : 0.4606
+- Top 20% Capture Rate      : 0.5330
+
+================================================================================
