@@ -220,7 +220,10 @@
                         <div class="scoring-overview-row">
                             <!-- Circular SVG Gauge -->
                             <div class="gauge-card">
-                                <span class="gauge-title">Xác Suất Vỡ Nợ (PD)</span>
+                                <div class="gauge-card-header">
+                                    <span class="gauge-title">Xác Suất Vỡ Nợ (PD)</span>
+                                    <span id="res-pd-sub" class="pd-pill approved">An Toàn</span>
+                                </div>
                                 <div class="gauge-visual">
                                     <svg viewBox="0 0 200 120" class="gauge-svg">
                                         <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#1e293b" stroke-width="18" stroke-linecap="round"></path>
@@ -228,13 +231,20 @@
                                     </svg>
                                     <div class="gauge-center-text">
                                         <span id="res-pd-val" class="gauge-val">8.4%</span>
-                                        <span class="gauge-sub">Mức rủi ro thấp</span>
+                                        <span class="gauge-cutoff-hint">Ngưỡng chuẩn: 48.2%</span>
                                     </div>
                                 </div>
-                                <div class="gauge-scales">
-                                    <span>0% An toàn</span>
-                                    <span>20% Chú ý</span>
-                                    <span>45%+ Từ chối</span>
+                                <div class="risk-scale-container">
+                                    <div class="risk-scale-bar">
+                                        <div class="scale-segment seg-green" title="Duyệt (<48%)"></div>
+                                        <div class="scale-segment seg-amber" title="Xem xét (48-52%)"></div>
+                                        <div class="scale-segment seg-red" title="Từ chối (>52%)"></div>
+                                    </div>
+                                    <div class="gauge-scales">
+                                    <span class="scale-label text-green">&lt;48% Duyệt</span>
+                                    <span class="scale-label text-amber">48-52% Xem</span>
+                                    <span class="scale-label text-red">&gt;52% Chối</span>
+                                </div>
                                 </div>
                             </div>
 

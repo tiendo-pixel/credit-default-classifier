@@ -22,12 +22,15 @@ data/processed/*
 # ==========================================
 # Mô hình đã huấn luyện (Model artifacts)
 # ==========================================
-models/*
+# Allow tracking serialized model artifacts and metadata in models/
 !models/.gitkeep
+!models/*.joblib
+!models/*.json
+!models/*.txt
 
 *.pkl
 *.pickle
-*.joblib
+# *.joblib (Allow model artifacts in models/)
 *.pt
 *.pth
 *.onnx

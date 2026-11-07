@@ -530,6 +530,110 @@ body {
     padding: 1.25rem;
     text-align: center;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.gauge-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.pd-pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+.pd-pill.approved {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--accent-green);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.pd-pill.review {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--accent-amber);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.pd-pill.rejected {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--accent-red);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.gauge-cutoff-hint {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    display: block;
+    white-space: nowrap;
+    margin-top: 2px;
+}
+
+.risk-scale-container {
+    margin-top: 0.6rem;
+}
+
+.risk-scale-bar {
+    display: flex;
+    height: 4px;
+    border-radius: 999px;
+    overflow: hidden;
+    gap: 3px;
+    margin-bottom: 0.4rem;
+}
+
+.scale-segment {
+    height: 100%;
+    border-radius: 999px;
+    opacity: 0.85;
+}
+
+.scale-segment.seg-green {
+    flex: 4.8;
+    background: var(--accent-green);
+}
+
+.scale-segment.seg-amber {
+    flex: 0.8;
+    background: var(--accent-amber);
+}
+
+.scale-segment.seg-red {
+    flex: 4.4;
+    background: var(--accent-red);
+}
+
+.scale-label {
+    white-space: nowrap;
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+.scale-label.text-green {
+    color: var(--accent-green);
+}
+
+.scale-label.text-amber {
+    color: var(--accent-amber);
+}
+
+.scale-label.text-red {
+    color: var(--accent-red);
+}
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    text-align: center;
+    position: relative;
 }
 
 .gauge-title {
@@ -540,7 +644,7 @@ body {
 
 .gauge-visual {
     position: relative;
-    width: 180px;
+    width: 200px;
     margin: 0.5rem auto 0;
 }
 

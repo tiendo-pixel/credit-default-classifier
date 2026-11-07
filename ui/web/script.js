@@ -294,6 +294,19 @@ function renderScoringResults(res) {
     // PD Value and Animated Gauge Arc
     const pdPercent = (res.probability_of_default * 100).toFixed(1);
     document.getElementById("res-pd-val").textContent = `${pdPercent}%`;
+    const pdSub = document.getElementById("res-pd-sub");
+    if (pdSub) {
+        if (res.decision === "APPROVED") {
+            pdSub.className = "pd-pill approved"; pdSub.textContent = "An Toàn";
+            pdSub.style.color = "#10b981";
+        } else if (res.decision === "MANUAL REVIEW") {
+            pdSub.className = "pd-pill review"; pdSub.textContent = "Xem Xét";
+            pdSub.style.color = "#f59e0b";
+        } else {
+            pdSub.className = "pd-pill rejected"; pdSub.textContent = "Rủi Ro Cao";
+            pdSub.style.color = "#ef4444";
+        }
+    }
 
     // SVG Gauge: circumference of half-circle (r=80) is ~251.2
     const totalLength = 251.2;

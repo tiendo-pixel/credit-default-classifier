@@ -1,6 +1,5 @@
 import os
 from typing import List
-import joblib
 import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
@@ -15,6 +14,7 @@ from src.api.schemas import (
     BatchPredictionResponse,
     RiskFactor,
 )
+from src.predict import CreditPredictor
 
 # ==============================================================================
 # FASTAPI APPLICATION SETUP
@@ -34,20 +34,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load ML artifacts if available
-MODEL_PATH = "models/model.joblib"
-PREPROCESSOR_PATH = "models/preprocessor.joblib"
-
-loaded_model = None
-loaded_preprocessor = None
-
-if os.path.exists(MODEL_PATH) and os.path.exists(PREPROCESSOR_PATH):
-    try:
-        loaded_model = joblib.load(MODEL_PATH)
-        loaded_preprocessor = joblib.load(PREPROCESSOR_PATH)
-        print("-> ML Pipeline loaded successfully.")
-    except Exception as e:
-        print(f"-> Warning: Could not load trained models: {e}. Fallback enabled.")
+# Initialize production scoring engine
+predictor = CreditPredictor(
+    model_path="models/model.joblib",
+    metadata_path="models/model_metadata.json",
+)
 
 
 # ==============================================================================
@@ -60,72 +51,73 @@ def score_applicant(app_data: LoanApplicationRequest) -> PredictionResponse:
     dti = (monthly_installment + existing_debt_service) / app_data.monthly_income
     lti = app_data.requested_amount / (app_data.monthly_income * 12)
 
-    # 2. Probability of Default (PD) Computation
-    if loaded_model is not None and loaded_preprocessor is not None:
+    # 2. Probability of Default (PD) Computation via ML Engine
+    if predictor.pipeline is not None:
         try:
-            # Construct feature dataframe for production model
-            input_dict = {
-                "disbursed_amount": [app_data.requested_amount],
-                "income": [app_data.monthly_income],
-                "dti": [dti],
-                "lti": [lti],
-                "cic_max_credit_group": [app_data.cic_max_credit_group],
-                "inquiries_last_3m": [app_data.inquiries_last_3m],
-                "card_utilization": [app_data.credit_card_utilization],
-                "non_bank_ratio": [app_data.non_bank_debt_ratio],
-                "age": [app_data.age]
+            # Map input payload to model feature inputs
+            app_dict = {
+                "age": app_data.age,
+                "income_m": app_data.monthly_income,
+                "requested_amount": app_data.requested_amount,
+                "loan_tenor_months": app_data.loan_tenor_months,
+                "total_existing_debt": app_data.total_existing_debt,
+                "cic_max_group_12m": app_data.cic_max_credit_group,
+                "cic_cc_util": app_data.credit_card_utilization / 100.0,
+                "enq_3m": app_data.inquiries_last_3m,
+                "cic_inquiry_3m": app_data.inquiries_last_3m,
+                "non_bank_loan_ratio": app_data.non_bank_debt_ratio / 100.0,
+                "current_dti": dti,
+                "loan_to_income": lti,
             }
-            df_in = pd.DataFrame(input_dict)
-            transformed_x = loaded_preprocessor.transform(df_in)
-            pd_prob = float(loaded_model.predict_proba(transformed_x)[0, 1])
+            pred_res = predictor.predict_single(app_dict)
+            pd_prob = pred_res["probability_of_default"]
+            credit_score = pred_res["credit_score"]
+            decision = pred_res["decision"]
+            badge_color = pred_res["badge_color"]
+            reason = pred_res["decision_reason"]
+            model_ver = pred_res["model_version"]
         except Exception:
             pd_prob = calculate_empirical_pd(app_data, dti)
+            credit_score = predictor.pd_to_credit_score(pd_prob)
+            dec_info = predictor.evaluate_decision(pd_prob, app_data.cic_max_credit_group, dti)
+            decision = dec_info["decision"]
+            badge_color = dec_info["badge_color"]
+            reason = dec_info["decision_reason"]
+            model_ver = "Empirical_RuleEngine_v1"
     else:
         pd_prob = calculate_empirical_pd(app_data, dti)
+        credit_score = predictor.pd_to_credit_score(pd_prob)
+        dec_info = predictor.evaluate_decision(pd_prob, app_data.cic_max_credit_group, dti)
+        decision = dec_info["decision"]
+        badge_color = dec_info["badge_color"]
+        reason = dec_info["decision_reason"]
+        model_ver = "Empirical_RuleEngine_v1"
 
-    # 3. Credit Score Calculation (Scale: 300 to 850)
-    # High PD -> Lower Score
-    credit_score = int(np.clip(850 - (pd_prob * 550), 300, 850))
-
-    # 4. Underwriting Decision & Policy Thresholds
-    if pd_prob < 0.20 and app_data.cic_max_credit_group == 1 and dti < 0.50:
-        decision = "APPROVED"
-        badge_color = "#10b981"  # Emerald Green
-        reason = "Hồ sơ thỏa mãn toàn bộ tiêu chí tín dụng: Tỷ lệ DTI lành mạnh, lịch sử tín dụng CIC chuẩn."
-    elif pd_prob < 0.45 and app_data.cic_max_credit_group <= 2:
-        decision = "MANUAL REVIEW"
-        badge_color = "#f59e0b"  # Amber
-        reason = "Phát hiện tín hiệu rủi ro mức độ trung bình (áp lực nợ hoặc tra cứu gần đây). Cần thẩm định bổ sung."
-    else:
-        decision = "REJECTED"
-        badge_color = "#ef4444"  # Rose Red
-        reason = "Xác suất vỡ nợ vượt quá khẩu vị rủi ro (Nợ xấu CIC hoặc gánh nặng nợ DTI quá ngưỡng chịu đựng)."
-
-    # 5. Top Risk Factors (Explainability)
+    # 3. Top Risk Factors (Explainability)
     factors: List[RiskFactor] = [
         RiskFactor(
             dimension="Lịch sử nợ CIC",
             contribution_percent=round(min(35.0, (app_data.cic_max_credit_group - 1) * 35.0 + 5.0), 1),
             status="Nguy hiểm" if app_data.cic_max_credit_group > 1 else "Tốt",
-            detail=f"Nhóm nợ lịch sử cao nhất: Nhóm {app_data.cic_max_credit_group}"
+            detail=f"Nhóm nợ lịch sử cao nhất: Nhóm {app_data.cic_max_credit_group}",
         ),
         RiskFactor(
             dimension="Gánh nặng nợ (DTI)",
             contribution_percent=round(min(30.0, dti * 40.0), 1),
             status="Cảnh báo" if dti > 0.50 else "Tốt",
-            detail=f"Tỷ lệ nợ trên thu nhập hàng tháng: {dti:.1%}"
+            detail=f"Tỷ lệ nợ trên thu nhập hàng tháng: {dti:.1%}",
         ),
         RiskFactor(
             dimension="Tần suất tra cứu CIC (3M)",
             contribution_percent=round(min(20.0, app_data.inquiries_last_3m * 6.5), 1),
             status="Cao" if app_data.inquiries_last_3m >= 3 else "Bình thường",
-            detail=f"Số lần các TCTD tra cứu gần đây: {app_data.inquiries_last_3m} lần"
+            detail=f"Số lần các TCTD tra cứu gần đây: {app_data.inquiries_last_3m} lần",
         ),
         RiskFactor(
             dimension="Hạn mức thẻ tín dụng",
             contribution_percent=round(app_data.credit_card_utilization * 0.15, 1),
             status="Căng thẳng" if app_data.credit_card_utilization > 75 else "An toàn",
-            detail=f"Mức độ sử dụng hạn mức thẻ: {app_data.credit_card_utilization:.0f}%"
+            detail=f"Mức độ sử dụng hạn mức thẻ: {app_data.credit_card_utilization:.0f}%",
         ),
     ]
 
@@ -139,12 +131,12 @@ def score_applicant(app_data: LoanApplicationRequest) -> PredictionResponse:
         debt_to_income_ratio=round(dti, 4),
         loan_to_income_ratio=round(lti, 4),
         top_risk_factors=factors,
-        model_version="LGBM_CreditRisk_v1.0"
+        model_version=model_ver,
     )
 
 
 def calculate_empirical_pd(data: LoanApplicationRequest, dti: float) -> float:
-    """Empirical calibrated credit risk engine for baseline underwriting."""
+    """Empirical calibrated credit risk engine for baseline underwriting fallback."""
     base_pd = 0.04
     cic_penalty = (data.cic_max_credit_group - 1) * 0.22
     dti_penalty = max(0.0, (dti - 0.40) * 0.45)
@@ -164,8 +156,9 @@ def health_check():
     return {
         "status": "healthy",
         "service": "Credit Default Scoring Engine",
-        "model_loaded": loaded_model is not None,
-        "version": "1.0.0"
+        "model_loaded": predictor.pipeline is not None,
+        "model_name": predictor.metadata.get("model_name", "RandomForest"),
+        "version": "1.0.0",
     }
 
 
@@ -178,9 +171,9 @@ def predict_single(application: LoanApplicationRequest):
 
 
 @app.post("/api/predict/batch", response_model=BatchPredictionResponse)
-def predict_batch(payload: BatchPredictionRequest):
+def predict_batch(batch_req: BatchPredictionRequest):
     try:
-        results = [score_applicant(app) for app in payload.applications]
+        results = [score_applicant(app) for app in batch_req.applications]
         approved = sum(1 for r in results if r.decision == "APPROVED")
         review = sum(1 for r in results if r.decision == "MANUAL REVIEW")
         rejected = sum(1 for r in results if r.decision == "REJECTED")
@@ -190,15 +183,20 @@ def predict_batch(payload: BatchPredictionRequest):
             approved_count=approved,
             review_count=review,
             rejected_count=rejected,
-            results=results
+            results=results,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 # ==============================================================================
-# STATIC FRONTEND SERVING
+# STATIC FRONTEND WEB DASHBOARD MOUNTING
 # ==============================================================================
-FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../ui/web"))
-if os.path.exists(FRONTEND_DIR):
-    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="web")
+WEB_DIR = "ui/web"
+if os.path.exists(WEB_DIR):
+    @app.get("/")
+    def serve_dashboard():
+        """Serve the CreditGuard AI interactive underwriting web dashboard."""
+        return FileResponse(os.path.join(WEB_DIR, "index.html"))
+
+    app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="web_ui")
